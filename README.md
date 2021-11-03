@@ -11,19 +11,17 @@ nvm install 14.15.3
 npm -v # 14.15.3
 ```
 
-Start your own hardhat chain
+Start your own hardhat chain:
 
 ```
-yarn chain
+npx hardhat node
 ```
 
-Use Node v14
+Use Node v14:
 ```
 nvm use 14.15.3
 npm install
-cd contracts
-node deploy.ts
-cd ..
+node contracts/deploy.ts
 npm run compile-dev hash-check 15
 npm run compile-dev hash-check-bits 20
 npm run compile-dev sig-check 20
