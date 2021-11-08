@@ -99,24 +99,24 @@ async function deploy(fileName, libraries = []) {
     const abi = contract.abi;
 
     // iterate through the link references
-    Object.entries(contract.evm.bytecode.linkReferences).forEach(
-      ([_link, references]) => {
-        Object.entries(references).forEach(
-          ([libraryName, [location]]) => {
-            // get the hex placeholder in the bytecode from the reference
-            const hex = bytecode.slice(
-              location.start * 2 + 2,
-              (location.start + location.length) * 2 - 2,
-            );
-
-            linkReferences[hex] = librariesAddresses[libraryName];
-          }
-        );
-      }
-    );
-    bytecode = linker.linkBytecode(bytecode, linkReferences);
-
     try {
+      Object.entries(contract.evm.bytecode.linkReferences).forEach(
+        ([_link, references]) => {
+          Object.entries(references).forEach(
+            ([libraryName, [location]]) => {
+              // get the hex placeholder in the bytecode from the reference
+              const hex = bytecode.slice(
+                location.start * 2 + 2,
+                (location.start + location.length) * 2 - 2,
+              );
+
+              linkReferences[hex] = librariesAddresses[libraryName];
+            }
+          );
+        }
+      );
+      bytecode = linker.linkBytecode(bytecode, linkReferences);
+
       const factory = await new ContractFactory(
         abi, bytecode, signer
       );
@@ -140,7 +140,7 @@ async function deploy(fileName, libraries = []) {
         name, bytecode, abi, address: contractObject.address,
       };
     } catch (err) {
-      console.error(err);
+      console.error(err.message ?? err);
     }
   }
 }

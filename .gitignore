@@ -10,12 +10,4 @@ circuits-compiled
 contracts/json
 keys
 
-circuit.r1cs
-*.zkey
-*.wasm
-*.ptau
-proof.json
-public.json
-verification_key.json
-witness.wtns
-circuit.sym
+build/
