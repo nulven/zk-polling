@@ -4,41 +4,34 @@ A public message board, hosted on a solidity contract, that uses ZK-SNARKS to al
 
 ## Setup and Run
 
-Use Node v14. If you don't have it, do:
+Circom 2.0 is a Rust program that has to be built from source:
 
-```
-nvm install 14.15.3
-npm -v # 14.15.3
-```
+* `git clone https://github.com/iden3/circom.git`
+* `cd circom`
+* `cargo build --release`
+* `cargo install --path circom  # installs to ~/.cargo/bin/`
 
-Start your own hardhat chain
+For local development, start your own hardhat chain:
 
-```
-yarn chain
-```
+* `npx hardhat node`
 
-Use Node v14
-```
-nvm use 14.15.3
-npm install
-cd contracts
-node deploy.ts
-cd ..
-npm run compile-dev hash-check 15
-npm run compile-dev hash-check-bits 20
-npm run compile-dev sig-check 20
-npm run compile hash-check 15
-npm run compile hash-check-bits 20
-npm run compile sig-check 20
-```
+Use Node v14:
 
-Run the local server and client watcher
+* `nvm install lts/fermium`
+* `npm install`
+* `node contracts/deploy.ts`
+* `node circuits/builder.js -c hash-check -p 15`
+* `node circuits/builder.js -c hash-check-bits -p 20`
+* `node circuits/builder.js -c sig-check -p 20`
+* `node circuits/builder.js -c hash-check -p 15 -d`
+* `node circuits/builder.js -c hash-check-bits -p 20 -d`
+* `node circuits/builder.js -c sig-check -p 20 -d`
 
-```
-npm run dev
-```
+Run the local server and client watcher:
 
-View localhost:8080
+* `npm run dev`
+
+View [localhost:8080](http://localhost:8080).
 
 ## Circuits
 
@@ -71,7 +64,7 @@ View localhost:8080
 | 'sig'       | No      | 2-by-256-bit array | EdDSA signature                                       |
 | 'message'   | No      | 312-bit array      | binary representation of the MiMC hash of the message |
 
-Example use
+## Example Use
 
 ```
 import { babyJub, eddsa } from 'circomlib';
@@ -116,25 +109,25 @@ const hash = mimc(...aBits).toString();
 const inputs = { publicKey: aBits, hashes: [hash], signature: sig, message: msgBits };
 ```
 
-## Add a circuit
+## Add A Circuit
 
-Make a new directory in `/circuits/` with the name of the circuit.
-
-Copy the `pot15_final.ptau` file from `/circuits/hash` into the new directory.
+Make a new directory in `circuits/` with the name of your circuit: `<CIRCUIT_NAME>`.
 
 In the new directory, create `circuit.circom` and `input.json` with the test inputs.
 
-Run `npm run compile CIRCUIT_NAME`, if that doesn't work `npm run compile CIRCUIT_NAME 20`. If it complains about an env file in development, use `compile-dev` instead of `compile`.
+Run `npm run compile -- -c <CIRCUIT_NAME>`, if that doesn't work `npm run compile -- -c <CIRCUIT_NAME> -p 20 -d`. If it complains about an env file in development, omit `-d`.
+
 If the circuit and input produce a valid proof you should see `OK`.
 
-The compiled `circuit.wasm` file will be in `/circuits/circuits-compiled/CIRCUIT_NAME`.
-The proof key `circuit_final.zkey` and the verification key `verification_key.json` will be found in `/circuits/keys/CIRCUIT_NAME`.
+The compiled `circuit.wasm` file will be in `build/circuits/<CIRCUIT_NAME>/circuit_js/`.
+
+The proof key `circuit_final.zkey` and the verification key `verification_key.json` will be found in `build/keys/<CIRCUIT_NAME>`.
 
 An example of creating and verifying a new proof in Node can be found in `/client/prover.js`.
 
 Run `./solbuilder.js` to generate Solidity from the contracts.
 
-## How it works
+## How It Works
 
 1. User generates EdDSA key pair `(pk, sk)` and sends the MiMC hash to the server `H(pk)`.
 2. To vote, the user first proves they're registered to the poll by sending a snark proving that they have a public key `pk` to one of the recorded MiMC hashes.
@@ -142,7 +135,7 @@ Run `./solbuilder.js` to generate Solidity from the contracts.
 
 Valid `sig = EdDSA(sk, msg)`
 where `pk = private2public(sk)`
-and `H(pk)` is a recorded hash
+and `H(pk)` is a recorded hash.
 
 ## Poll Database
 
@@ -168,8 +161,6 @@ VOTE,SIGNATURE
 
 ## Common Errors
 
-```
-When I call a contract from frontend, some path doesnt work -- I see 'call revert exception' or 'calling an account which is not a contract'
-```
+> When I call a contract from frontend, some path doesn't work – I see `call revert exception` or `calling an account which is not a contract`
 
 The chain probably doesn't know the contract address. In our experience, restarting chain and redeploying has worked for us.

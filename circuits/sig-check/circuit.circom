@@ -1,11 +1,13 @@
-include "../../node_modules/circomlib/circuits/mimcsponge.circom"
-include "../../node_modules/circomlib/circuits/eddsa.circom"
-include "../../node_modules/circomlib/circuits/bitify.circom"
+pragma circom 2.0.0;
+
+include "../../node_modules/circomlib/circuits/mimcsponge.circom";
+include "../../node_modules/circomlib/circuits/eddsa.circom";
+include "../../node_modules/circomlib/circuits/bitify.circom";
 
 template Main(n) {
-  signal private input publicKey[256];
+  signal input publicKey[256];
   signal input hashes[n];
-  signal private input sigR8[256];
+  signal input sigR8[256];
   signal input sigR8Halves[2]; // Import the 256 bit signature as two halves
   signal input sigS; // Signature within prime field
   signal input message; // hash of message/message assumed to be within prime field
