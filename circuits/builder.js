@@ -152,7 +152,6 @@ for (const source of circuits) {
       : __dirname
     )
     const outDir = path.join(relPath, '..', wasmDir, name)
-    // const outDir = path.join(__dirname, '..', wasmDir, name)
     const keyDir = path.join(relPath, '..', zkeyDir, name)
     const ptauDir = path.join(relPath, '..', hashDir)
     const jsDir = path.join(outDir, 'circuit_js')

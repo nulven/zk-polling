@@ -9,7 +9,7 @@
     "babel": "babel --presets es2015 client/index.js -o ./lib/index.js",
     "client": "$(npm bin)/webpack --mode development --watch",
     "dev": "$(npm bin)/concurrently \"npm run client\" \"npm run server\"",
-    "compile": "node ./circuits/builder.js --",
+    "compile": "node ./circuits/builder.js",
     "compile-solidity": "node ./circuits/solbuilder.js"
   },
   "repository": {
